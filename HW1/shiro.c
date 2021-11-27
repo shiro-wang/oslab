@@ -12,8 +12,7 @@ void pwd(){
 }
 void export_c(char* exe){
 	char origin[10]  = {0};
-	char after[200] = {0};
-	
+	char after[5000] = {0};
 	int read_now = 0;
 	int count=0;
 	//before=
@@ -24,14 +23,15 @@ void export_c(char* exe){
 			break;
 		}
 	}
-	printf("origin:%s content:%s\n", origin, getenv(origin));
+	//printf("origin:%s content:%s\n", origin, getenv(origin));
 	read_now++;
-	char tmp[50];
+	
+	char tmp[500];
 	char envname[10];
 	//after=
 	while(read_now<strlen(exe)){
 		count=0;
-		memset(tmp, 0, 50);
+		memset(tmp, 0, 500);
 		memset(envname, 0, 10);
 		for(;;read_now++){
 			if(exe[read_now] != '$'){
@@ -41,6 +41,7 @@ void export_c(char* exe){
 				break;
 			}
 		}
+		printf("tmp:%s\n",tmp);
 		//有用到enc variable 
 		count=0;
 		for(;;read_now++){
@@ -50,13 +51,16 @@ void export_c(char* exe){
 				break;
 			}
 		}
+		printf("envname:%s\n",envname);
 		char* env;
 		env = getenv(envname);
+		printf("%s\n",env);
 		strcat(after,tmp);
 		strcat(after,env);
 	}
-	setenv(origin, after, 1);
-	printf("origin:%s after_content:%s\n", origin, getenv(origin));
+	printf("%s\n",after);
+	//setenv(origin, after, 1);
+	//printf("origin:%s after_content:%s\n", origin, getenv(origin));
 }
 void echo(char* exe){
 	char after[500] = {0};
@@ -160,3 +164,4 @@ int main(int argc, char **argv) {
 	system("PAUSE");
 	return 0;
 }
+
