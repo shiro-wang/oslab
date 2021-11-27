@@ -11,8 +11,8 @@ void pwd(){
 	printf("current working directory: %s\n",getcwd(buf, sizeof(buf)));
 }
 void export_c(char* exe){
-	char* origin  = malloc(sizeof(char));
-	char* after = malloc(sizeof(char));
+	char[10] origin  = {0};
+	char[200] after = {0};
 	
 	int read_now = 0;
 	int count=0;
@@ -24,11 +24,15 @@ void export_c(char* exe){
 			break;
 		}
 	}
+	printf("origin:%s content:%s\n", origin, getenv(origin));
 	read_now++;
+	char tmp[50];
+	char envname[10];
 	//after=
 	while(read_now<strlen(exe)){
 		count=0;
-		char* tmp  = malloc(sizeof(char));
+		memset(tmp, 0, 50);
+		memset(envname, 0, 10);
 		for(;;read_now++){
 			if(exe[read_now] != '$'){
 				tmp[count++] = exe[read_now];
@@ -39,7 +43,6 @@ void export_c(char* exe){
 		}
 		//有用到enc variable 
 		count=0;
-		char* envname  = malloc(sizeof(char));
 		for(;;read_now++){
 			if((exe[read_now] >='a'&&exe[read_now] <='z') || (exe[read_now] >='A'&&exe[read_now] <='Z')){
 				envname[count++] = exe[read_now];
@@ -47,15 +50,12 @@ void export_c(char* exe){
 				break;
 			}
 		}
-		char* env;
-		env = getenv(envname);
+		
 		strcat(after,tmp);
 		strcat(after,env);
-		free(envname);
-		free(tmp);
 	}
-	free(origin);
-	free(after);
+	setenv(origin, after, 1);
+	printf("origin:%s after_content:%s\n", origin, getenv(origin));
 }
 void echo(char* exe){
 	char after[500] = {0};
@@ -101,7 +101,7 @@ void echo(char* exe){
 			tf=0;
 		}
 	}
-	printf("finish read_now:%d strlen(exe):%d\n", read_now, strlen(exe));
+	printf("finish read_now:%d strlen(exe):%ld\n", read_now, strlen(exe));
 	printf("%s\n",after);
 }
 
@@ -159,3 +159,4 @@ int main(int argc, char **argv) {
 	system("PAUSE");
 	return 0;
 }
+
