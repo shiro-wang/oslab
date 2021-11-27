@@ -11,8 +11,8 @@ void pwd(){
 	printf("current working directory: %s\n",getcwd(buf, sizeof(buf)));
 }
 void export_c(char* exe){
-	char[10] origin  = {0};
-	char[200] after = {0};
+	char origin[10]  = {0};
+	char after[200] = {0};
 	
 	int read_now = 0;
 	int count=0;
@@ -50,7 +50,8 @@ void export_c(char* exe){
 				break;
 			}
 		}
-		
+		char* env;
+		env = getenv(envname);
 		strcat(after,tmp);
 		strcat(after,env);
 	}
@@ -159,4 +160,3 @@ int main(int argc, char **argv) {
 	system("PAUSE");
 	return 0;
 }
-
