@@ -148,7 +148,9 @@ char **split_the_line(char *line)
   tokens[position] = NULL;
   return tokens;
 }
-
+void failhaha(){
+	printf("Invalid situation\n");
+}
 void external(char* input){
 	pid_t wpid, pid=fork();
 	int status;
@@ -170,9 +172,7 @@ void external(char* input){
 	
 }
 
-void failhaha(){
-	printf("Invalid situation\n");
-}
+
 int main(int argc, char **argv) {
 	char history[500]={};
 	char input[LENGTH]={};
