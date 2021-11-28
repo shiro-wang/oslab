@@ -155,7 +155,7 @@ void external(char* input){
 	pid_t wpid, pid=fork();
 	int status;
 	
-	char** args=sh_spilt_the_line(input);
+	char** args=sh_split_the_line(input);
 	
 	if(pid == 0){
 		if(execvp(args[0], args)==-1)
