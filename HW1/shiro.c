@@ -159,7 +159,8 @@ void external(char* input){
 	
 	if(pid == 0){
 		if(execvp(args[0], args)==-1)
-			perror("external"); 
+			perror("external");
+		exit(EXIT_FAILURE);
 	}else if(pid > 0){
 		
 		do {
