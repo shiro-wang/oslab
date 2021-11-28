@@ -118,7 +118,7 @@ void echo(char* exe){
 	//printf("finish read_now:%d strlen(exe):%ld\n", read_now, strlen(exe));
 	printf("%s\n",after);
 }
-char **split_the_line(char *line)
+char **sh_split_the_line(char *line)
 {
   int bufsize = LSH_TOK_BUFSIZE, position = 0;
   char **tokens = malloc(bufsize * sizeof(char*));
@@ -155,7 +155,7 @@ void external(char* input){
 	pid_t wpid, pid=fork();
 	int status;
 	
-	char** args=spilt_the_line(input);
+	char** args=sh_spilt_the_line(input);
 	
 	if(pid == 0){
 		if(execvp(args[0], args)==-1)
