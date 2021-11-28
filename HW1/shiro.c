@@ -1,10 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h> 
+#include <sys/types.h> 
 #include <string.h>
 #define LENGTH 50
+#define LSH_TOK_BUFSIZE 64
+#define LSH_TOK_DELIM " \t\r\n\a"
 void cd(char* exe){
-	chdir(exe);
+	if(chdir(exe)==-1)
+		perror("cd");
+		
 }
 void pwd(){
 	char buf[100];
@@ -33,7 +39,7 @@ void export_c(char* exe){
 		count=0;
 		memset(tmp, 0, 500);
 		memset(envname, 0, 10);
-		for(;;read_now++){
+		for(;read_now<strlen(exe);read_now++){
 			if(exe[read_now] != '$'){
 				tmp[count++] = exe[read_now];
 			}else{
@@ -41,24 +47,25 @@ void export_c(char* exe){
 				break;
 			}
 		}
-		printf("tmp:%s\n",tmp);
+		strcat(after,tmp);
+		//printf("tmp:%s\n",tmp);
 		//有用到enc variable 
 		count=0;
-		for(;;read_now++){
+		for(;read_now<strlen(exe);read_now++){
 			if((exe[read_now] >='a'&&exe[read_now] <='z') || (exe[read_now] >='A'&&exe[read_now] <='Z')){
 				envname[count++] = exe[read_now];
 			}else{
+				char* env;
+				env = getenv(envname);
+				strcat(after,env);
+				//printf("env:%s\n",env);
 				break;
 			}
 		}
-		printf("envname:%s\n",envname);
-		char* env;
-		env = getenv(envname);
-		printf("%s\n",env);
-		strcat(after,tmp);
-		strcat(after,env);
+		//printf("envname:%s\n",envname);
+		//printf("%s\n",env);
 	}
-	printf("%s\n",after);
+	//printf("%s\n",after);
 	//setenv(origin, after, 1);
 	//printf("origin:%s after_content:%s\n", origin, getenv(origin));
 }
@@ -75,7 +82,7 @@ void echo(char* exe){
 		count=0;
 		memset(tmp, 0, 50);
 		memset(envname, 0, 10);
-		for(;;read_now++){
+		for(;read_now<strlen(exe);read_now++){
 			if(exe[read_now] != '$'){
 				tmp[count++] = exe[read_now];
 			}else{
@@ -83,31 +90,84 @@ void echo(char* exe){
 				break;
 			}
 		}
+		strcat(after,tmp);
+		//printf("read_now:%d\n",read_now);
 		//printf("tmp:%s\n",tmp);
 		//有用到enc variable 
+		
 		count=0;
 		for(;read_now<strlen(exe);read_now++){
 			if((exe[read_now] >='a'&&exe[read_now] <='z') || (exe[read_now] >='A'&&exe[read_now] <='Z')){
 				envname[count++] = exe[read_now];
 			}else{
+				char* env;
+				env = getenv(envname);
+				strcat(after,env);
 				break;
 			}
 		}
 		//printf("envname:%s\n",envname);
-		
-		char* env;
-		env = getenv(envname);
 		//printf("env:%s\n",env);
-		strcat(after,tmp);
-		strcat(after,env);
-		printf("after:%s\n",after);
+		//printf("after:%s\n",after);
 		//printf("read_now:%d strlen(exe):%d\n", read_now, strlen(exe));
 		if(read_now==strlen(exe)){
+			//printf("end");
 			tf=0;
 		}
 	}
-	printf("finish read_now:%d strlen(exe):%ld\n", read_now, strlen(exe));
+	//printf("finish read_now:%d strlen(exe):%ld\n", read_now, strlen(exe));
 	printf("%s\n",after);
+}
+char **split_line(char *line)
+{
+  int bufsize = LSH_TOK_BUFSIZE, position = 0;
+  char **tokens = malloc(bufsize * sizeof(char*));
+  char *token;
+
+  if (!tokens) {
+    fprintf(stderr, "lsh: allocation error\n");
+    exit(EXIT_FAILURE);
+  }
+
+  token = strtok(line, LSH_TOK_DELIM);
+  while (token != NULL) {
+    tokens[position] = token;
+    position++;
+
+    if (position >= bufsize) {
+      bufsize += LSH_TOK_BUFSIZE;
+      tokens = realloc(tokens, bufsize * sizeof(char*));
+      if (!tokens) {
+        fprintf(stderr, "lsh: allocation error\n");
+        exit(EXIT_FAILURE);
+      }
+    }
+
+    token = strtok(NULL, LSH_TOK_DELIM);
+  }
+  tokens[position] = NULL;
+  return tokens;
+}
+
+void external(char* input){
+	pid_t wpid, pid=fork();
+	int status;
+	
+	char** args=spilt_line(input);
+	
+	if(pid == 0){
+		if(execvp(args[0], args)==-1)
+			perror("external"); 
+	}else if(pid > 0){
+		
+		do {
+	      wpid = waitpid(pid, &status, WUNTRACED);
+	    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		
+	}else{
+		fail();
+	}
+	
 }
 
 void fail(){
@@ -154,8 +214,10 @@ int main(int argc, char **argv) {
 			export_c(execute);
 		}else if(!strncmp(command, "echo",4)){
 			echo(execute);
-		}
-		
+		}else {
+			external(input);
+		} 
+		fflush(stdin);
 		memset(input, 0, LENGTH);
 		free(execute);
 		printf("%s",prompt);
@@ -164,4 +226,6 @@ int main(int argc, char **argv) {
 	system("PAUSE");
 	return 0;
 }
+
+
 
