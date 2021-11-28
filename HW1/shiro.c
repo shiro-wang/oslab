@@ -118,7 +118,7 @@ void echo(char* exe){
 	//printf("finish read_now:%d strlen(exe):%ld\n", read_now, strlen(exe));
 	printf("%s\n",after);
 }
-char **split_line(char *line)
+char **split_the_line(char *line)
 {
   int bufsize = LSH_TOK_BUFSIZE, position = 0;
   char **tokens = malloc(bufsize * sizeof(char*));
@@ -153,7 +153,7 @@ void external(char* input){
 	pid_t wpid, pid=fork();
 	int status;
 	
-	char** args=spilt_line(input);
+	char** args=spilt_the_line(input);
 	
 	if(pid == 0){
 		if(execvp(args[0], args)==-1)
@@ -165,12 +165,12 @@ void external(char* input){
 	    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
 		
 	}else{
-		fail();
+		failhaha();
 	}
 	
 }
 
-void fail(){
+void failhaha(){
 	printf("Invalid situation\n");
 }
 int main(int argc, char **argv) {
@@ -226,6 +226,4 @@ int main(int argc, char **argv) {
 	system("PAUSE");
 	return 0;
 }
-
-
 
