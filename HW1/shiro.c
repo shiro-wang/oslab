@@ -4,6 +4,8 @@
 #include <sys/wait.h> 
 #include <sys/types.h> 
 #include <string.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #define LENGTH 50
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
@@ -176,12 +178,15 @@ void external(char* input){
 
 int main(int argc, char **argv) {
 	char history[500]={};
-	char input[LENGTH]={};
+	//char input[LENGTH]={};
 	char command[10]={};
 	int count;
+	char *input;
+	char *ps;
 	char *prompt = "It's my shell, start! : ";
 	printf("%s",prompt);
-	fgets(input, LENGTH, stdin);
+	//fgets(input, LENGTH, stdin);
+	input=readline(ps);
 	int read_now;
 	while(strcmp(input, "exit\n")){
 		printf("your input:%s",input);
@@ -219,10 +224,11 @@ int main(int argc, char **argv) {
 			external(input);
 		} 
 		fflush(stdin);
-		memset(input, 0, LENGTH);
+		//memset(input, 0, LENGTH);
 		free(execute);
 		printf("%s",prompt);
-		fgets(input, LENGTH, stdin);
+		//fgets(input, LENGTH, stdin);
+		input=readline(ps);
 	}
 	system("PAUSE");
 	return 0;
