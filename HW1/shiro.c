@@ -186,7 +186,8 @@ void external(char* input){
 	}else if(pid > 0){
 		if(bg == 1){
 			printf("[proc %d started]\n", pid);
-			strcpy(pidmaps[pid_count],pid);
+			pidmaps[pid_count]=pid;
+			pid_count++;
 		}else{
 			do {
 		      wpid = waitpid(pid, &status, WUNTRACED);
