@@ -157,29 +157,46 @@ void failhaha(){
 	printf("Invalid situation\n");
 }
 void external(char* input){
-	pid_t wpid, pid=fork();
-	int status;
-	
 	char** args=sh_split_the_line(input);
-	printf("length:%d\n",command_count);
-	for(int i=0;i<command_count;i++){
-		printf("%s ",args[i]);
-	}
-	printf("\n");
-	if(pid == 0){
-		if(execvp(args[0], args)==-1)
-			perror("external");
-		exit(EXIT_FAILURE);
-	}else if(pid > 0){
-		
-		do {
-	      wpid = waitpid(pid, &status, WUNTRACED);
-	    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-		
+//	printf("length:%d\n",command_count);
+//	for(int i=0;i<command_count;i++){
+//		printf("%s ",args[i]);
+//	}
+//	printf("\n");
+	if(!strcmp("&",args[command_count-1])){
+		char *tmp;
+		for(int i=0;i<command_count-1;i++){
+			strcat(tmp,args[i]);
+			strcat(tmp," ");
+		}
+		char** args2=sh_split_the_line(tmp);
+		pid_t pid2=fork();
+		if(pid2 == 0){
+			if(execvp(args2[0], args2)==-1)
+				perror("external");
+			exit(EXIT_FAILURE);
+		}else if(pid2 > 0){
+			break;
+		}else{
+			failhaha();
+		}
 	}else{
-		failhaha();
+		pid_t wpid, pid=fork();
+		int status;
+		if(pid == 0){
+			if(execvp(args[0], args)==-1)
+				perror("external");
+			exit(EXIT_FAILURE);
+		}else if(pid > 0){
+			
+			do {
+		      wpid = waitpid(pid, &status, WUNTRACED);
+		    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+			
+		}else{
+			failhaha();
+		}
 	}
-	
 }
 
 
