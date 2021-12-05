@@ -161,9 +161,9 @@ void external(char* input){
 	int status;
 	
 	char** args=sh_split_the_line(input);
-	printf("length:%ld\n",command_count);
+	printf("length:%d\n",command_count);
 	for(int i=0;i<command_count;i++){
-		printf("%s ",*args[i]);
+		printf("%s ",args[i]);
 	}
 	printf("\n");
 	if(pid == 0){
