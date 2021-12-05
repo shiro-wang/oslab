@@ -4,8 +4,8 @@
 #include <sys/wait.h> 
 #include <sys/types.h> 
 #include <string.h>
-//#include <readline/readline.h>
-//#include <readline/history.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #define LENGTH 50
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
@@ -207,54 +207,55 @@ int main(int argc, char **argv) {
 	char input[LENGTH]={};
 	char command[10]={};
 	int count;
-	//char *input;
+	char *input;
 	//char *ps;
 	char *prompt = "It's my shell, start! : ";
-	printf("%s",prompt);
-	fgets(input, LENGTH, stdin);
-	//input=readline(ps);
+	//printf("%s",prompt);
+	input=readline(prompt);
 	int read_now;
-	while(strcmp(input, "exit\n")){
-		//printf("your input:%s",input);
-		strcat(history, input);
-		//printf("%s",history);
-		char *execute = malloc(sizeof(char));
-		read_now = 0;
-		memset(command, 0, 10);
-		memset(execute, 0, 10);
-		count=0;
-		//command
-		for(read_now=0;read_now<strlen(input)-1;read_now++){
-			if(input[read_now] != ' '){
-				command[count++] = input[read_now];
-			}else{	
-				break;
+	while(strncmp(input, "exit", 4)){
+		if(input!=NULL)
+			//printf("your input:%s",input);
+			//strcat(history, input);
+			add_history(input);
+			//printf("%s",history);
+			char *execute = malloc(sizeof(char));
+			read_now = 0;
+			memset(command, 0, 10);
+			memset(execute, 0, 10);
+			count=0;
+			//command
+			for(read_now=0;read_now<strlen(input)-1;read_now++){
+				if(input[read_now] != ' '){
+					command[count++] = input[read_now];
+				}else{	
+					break;
+				}
 			}
-		}
-		read_now++;
-		count=0;
-		//others
-		for(;read_now<strlen(input)-1;read_now++){
-			execute[count++] = input[read_now];
-		}
-		/////////////////////
-		if(!strncmp(command, "cd",2)){
-			cd(execute);
-		}else if(!strncmp(command, "pwd",3)){
-			pwd();
-		}else if(!strncmp(command, "export",6)){
-			export_c(execute);
-		}else if(!strncmp(command, "echo",4)){
-			echo(execute);
-		}else {
-			external(input);
-		} 
-		fflush(stdin);
-		memset(input, 0, LENGTH);
-		free(execute);
-		printf("%s",prompt);
-		fgets(input, LENGTH, stdin);
-		//input=readline(ps);
+			read_now++;
+			count=0;
+			//others
+			for(;read_now<strlen(input)-1;read_now++){
+				execute[count++] = input[read_now];
+			}
+			/////////////////////
+			if(!strncmp(command, "cd",2)){
+				cd(execute);
+			}else if(!strncmp(command, "pwd",3)){
+				pwd();
+			}else if(!strncmp(command, "export",6)){
+				export_c(execute);
+			}else if(!strncmp(command, "echo",4)){
+				echo(execute);
+			}else {
+				external(input);
+			} 
+			fflush(stdin);
+			memset(input, 0, LENGTH);
+			free(execute);
+			//printf("%s",prompt);
+			//fgets(input, LENGTH, stdin);
+		input=readline(prompt);
 	}
 	system("PAUSE");
 	return 0;
