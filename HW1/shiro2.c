@@ -163,7 +163,7 @@ void failhaha(){
 void output(char** args, int position){
 	memset(output_filename, 50, sizeof(char));
 	int mode=0;
-	if(!strncmp(args[position]=='>>'){
+	if(!strncmp(args[position],">>",2){
 		mode=1;
 	}
 	
@@ -180,7 +180,7 @@ void external(char* input){
 	char** args=sh_split_the_line(input);
 	int status;
 	int bg=0;
-	for(int i=0;i<strlen(args);i++){
+	for(int i=0;i<command_count;i++){
 		if(!strncmp(args[i], ">", 1) || !strncmp(args[i], ">>", 2)){
 			output(args, i);
 		}
