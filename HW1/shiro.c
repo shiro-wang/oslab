@@ -158,7 +158,11 @@ void external(char* input){
 	int status;
 	
 	char** args=sh_split_the_line(input);
-	
+	printf("length:%ld\n",strlen(*args));
+	for(int i=0;i<strlen(*args)-1;i++){
+		printf("%s ",*args[i]);
+	}
+	printf("\n");
 	if(pid == 0){
 		if(execvp(args[0], args)==-1)
 			perror("external");
@@ -189,7 +193,7 @@ int main(int argc, char **argv) {
 	//input=readline(ps);
 	int read_now;
 	while(strcmp(input, "exit\n")){
-		printf("your input:%s",input);
+		//printf("your input:%s",input);
 		strcat(history, input);
 		//printf("%s",history);
 		char *execute = malloc(sizeof(char));
