@@ -9,6 +9,7 @@
 #define LENGTH 50
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
+int command_count;
 void cd(char* exe){
 	if(chdir(exe)==-1)
 		perror("cd");
@@ -122,6 +123,7 @@ void echo(char* exe){
 }
 char **sh_split_the_line(char *line)
 {
+  command_count = 0;
   int bufsize = LSH_TOK_BUFSIZE, position = 0;
   char **tokens = malloc(bufsize * sizeof(char*));
   char *token;
@@ -146,6 +148,7 @@ char **sh_split_the_line(char *line)
     }
 
     token = strtok(NULL, LSH_TOK_DELIM);
+    command_count++;
   }
   tokens[position] = NULL;
   return tokens;
@@ -158,8 +161,8 @@ void external(char* input){
 	int status;
 	
 	char** args=sh_split_the_line(input);
-	printf("length:%ld\n",strlen(*args));
-	for(int i=0;i<strlen(*args)-1;i++){
+	printf("length:%ld\n",command_count);
+	for(int i=0;i<command_count;i++){
 		printf("%s ",*args[i]);
 	}
 	printf("\n");
