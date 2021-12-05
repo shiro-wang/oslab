@@ -4,8 +4,8 @@
 #include <sys/wait.h> 
 #include <sys/types.h> 
 #include <string.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+//#include <readline/readline.h>
+//#include <readline/history.h>
 #define LENGTH 50
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
