@@ -204,7 +204,7 @@ void external(char* input){
 int main(int argc, char **argv) {
 	pidmaps = malloc(LSH_TOK_BUFSIZE * sizeof(pid_t));
 	char history[500]={};
-	char input[LENGTH]={};
+	//char input[LENGTH]={};
 	char command[10]={};
 	int count;
 	char *input;
@@ -214,6 +214,7 @@ int main(int argc, char **argv) {
 	input=readline(prompt);
 	int read_now;
 	while(strncmp(input, "exit", 4)){
+		printf("in:%d\n",input[0]);
 		if(!strncmp(input,"\n",1))
 			//printf("your input:%s",input);
 			//strcat(history, input);
