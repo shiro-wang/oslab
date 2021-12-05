@@ -214,7 +214,7 @@ int main(int argc, char **argv) {
 	input=readline(prompt);
 	int read_now;
 	while(strncmp(input, "exit", 4)){
-		if(input!=NULL)
+		if(!strncmp(input,"\n",1))
 			//printf("your input:%s",input);
 			//strcat(history, input);
 			add_history(input);
