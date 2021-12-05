@@ -166,6 +166,7 @@ void external(char* input){
 	if(!strcmp("&",args[command_count-1])){
 		char *tmp;
 		for(int i=0;i<command_count-1;i++){
+			printf("tmp:%s args[%d]:%s\n",tmp,i,args[i]);
 			strcat(tmp,args[i]);
 			strcat(tmp," ");
 		}
