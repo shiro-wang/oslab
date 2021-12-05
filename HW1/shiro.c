@@ -163,6 +163,8 @@ void external(char* input){
 //		printf("%s ",args[i]);
 //	}
 //	printf("\n");
+	int status;
+	int bg=0;
 	if(!strcmp("&",args[command_count-1])){
 		char *tmp=malloc(LSH_TOK_BUFSIZE * sizeof(char*));
 		for(int i=0;i<command_count-1;i++){
@@ -171,36 +173,26 @@ void external(char* input){
 			strcat(tmp," ");
 		}
 		printf("tmp:%s\n",tmp);
-		char** args2=sh_split_the_line(tmp);
-		pid_t wpid2, pid2=fork();
-		if(pid2 == 0){
-			if(execvp(args2[0], args2)==-1)
-				perror("external");
-			exit(EXIT_FAILURE);
-		}else if(pid2 > 0){
-			do {
-		      wpid2 = waitpid(pid2, &status, WCONTINUED);
-		    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		strcpy(input,tmp);
+		bg=1;
+	}
+	pid_t wpid, pid=fork();
+	if(pid == 0){
+		if(execvp(args[0], args)==-1)
+			perror("external");
+		exit(EXIT_FAILURE);
+	}else if(pid > 0){
+		if(bg == 1){
+			printf("proc %d started]\n", pid);
 		}else{
-			failhaha();
-		}
-	}else{
-		pid_t wpid, pid=fork();
-		int status;
-		if(pid == 0){
-			if(execvp(args[0], args)==-1)
-				perror("external");
-			exit(EXIT_FAILURE);
-		}else if(pid > 0){
-			
 			do {
 		      wpid = waitpid(pid, &status, WUNTRACED);
 		    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-			
-		}else{
-			failhaha();
 		}
+	}else{
+		failhaha();
 	}
+	
 }
 
 
