@@ -168,15 +168,16 @@ void external(char* input){
 	int status;
 	int bg=0;
 	if(!strcmp("&",args[command_count-1])){
-		char *tmp=malloc(LSH_TOK_BUFSIZE * sizeof(char*));
-		for(int i=0;i<command_count-1;i++){
-			//printf("tmp:%s args[%d]:%s\n",tmp,i,args[i]);
-			strcat(tmp,args[i]);
-			strcat(tmp," ");
-		}
-		printf("tmp:%s\n",tmp);
-		strcpy(input,tmp);
+//		char *tmp=malloc(LSH_TOK_BUFSIZE * sizeof(char*));
+//		for(int i=0;i<command_count-1;i++){
+//			//printf("tmp:%s args[%d]:%s\n",tmp,i,args[i]);
+//			strcat(tmp,args[i]);
+//			strcat(tmp," ");
+//		}
+//		printf("tmp:%s\n",tmp);
+//		strcpy(input,tmp);
 		bg=1;
+		args[command_count-1]=NULL;
 	}
 	pid_t wpid, pid=fork();
 	if(pid == 0){
@@ -201,7 +202,7 @@ void external(char* input){
 
 
 int main(int argc, char **argv) {
-	pidmaps = malloc(LSH_TOK_BUFSIZE * sizeof(pid_t))
+	pidmaps = malloc(LSH_TOK_BUFSIZE * sizeof(pid_t));
 	char history[500]={};
 	char input[LENGTH]={};
 	char command[10]={};
