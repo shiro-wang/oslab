@@ -12,6 +12,8 @@
 int command_count;
 int pid_count=0;
 int *pidmaps;
+char output_filename[50] = {};
+FILE *outfile;
 void cd(char* exe){
 	if(chdir(exe)==-1)
 		perror("cd");
@@ -158,24 +160,32 @@ char **sh_split_the_line(char *line)
 void failhaha(){
 	printf("Invalid situation\n");
 }
+void output(char** args, int position){
+	memset(output_filename, 50, sizeof(char));
+	int mode=0;
+	if(!strncmp(args[position]=='>>'){
+		mode=1;
+	}
+	
+	strcpy(output_filename,args[position+1]);
+	if(mode==0){
+		outfile = fopen(output_filename,"w");
+	}else{
+		outfile = fopen(output_filename,"a+");
+	}
+	args[position]=NULL;
+	do_command(args);
+}
 void external(char* input){
 	char** args=sh_split_the_line(input);
-//	printf("length:%d\n",command_count);
-//	for(int i=0;i<command_count;i++){
-//		printf("%s ",args[i]);
-//	}
-//	printf("\n");
 	int status;
 	int bg=0;
+	for(int i=0;i<strlen(args);i++){
+		if(!strncmp(args[i], ">", 1) || !strncmp(args[i], ">>", 2)){
+			output(args, i);
+		}
+	}
 	if(!strcmp("&",args[command_count-1])){
-//		char *tmp=malloc(LSH_TOK_BUFSIZE * sizeof(char*));
-//		for(int i=0;i<command_count-1;i++){
-//			//printf("tmp:%s args[%d]:%s\n",tmp,i,args[i]);
-//			strcat(tmp,args[i]);
-//			strcat(tmp," ");
-//		}
-//		printf("tmp:%s\n",tmp);
-//		strcpy(input,tmp);
 		bg=1;
 		args[command_count-1]=NULL;
 	}
@@ -199,63 +209,67 @@ void external(char* input){
 	}
 	
 }
-
+void do_command(char* input){
+	int read_now;
+	char command[10]={};
+	int count;
+	char *execute = malloc(sizeof(char));
+	read_now = 0;
+	memset(command, 0, 10);
+	memset(execute, 0, 10);
+	count=0;
+	//command
+	for(read_now=0;read_now<strlen(input)-1;read_now++){
+		if(input[read_now] != ' '){
+			command[count++] = input[read_now];
+		}else{	
+			break;
+		}
+	}
+	read_now++;
+	count=0;
+	//others
+	for(;read_now<strlen(input)-1;read_now++){
+		execute[count++] = input[read_now];
+	}
+	/////////////////////
+	if(!strncmp(command, "cd",2)){
+		cd(execute);
+	}else if(!strncmp(command, "pwd",3)){
+		pwd();
+	}else if(!strncmp(command, "export",6)){
+		export_c(execute);
+	}else if(!strncmp(command, "echo",4)){
+		echo(execute);
+	}else {
+		external(input);
+	} 
+	//fflush(stdin);
+	//memset(input, 0, LENGTH);
+	free(execute);
+}
 
 int main(int argc, char **argv) {
 	pidmaps = malloc(LSH_TOK_BUFSIZE * sizeof(pid_t));
 	char history[500]={};
 	//char input[LENGTH]={};
-	char command[10]={};
-	int count;
+	
 	char *input;
 	//char *ps;
 	char *prompt = "It's my shell, start! : ";
 	//printf("%s",prompt);
 	input=readline(prompt);
-	int read_now;
+	
 	while(strncmp(input, "exit", 4)){
-		printf("in:%d\n",input[0]);
-		if(!strncmp(input,"\n",1))
+		if(input[0]!=0){
 			//printf("your input:%s",input);
 			//strcat(history, input);
 			add_history(input);
 			//printf("%s",history);
-			char *execute = malloc(sizeof(char));
-			read_now = 0;
-			memset(command, 0, 10);
-			memset(execute, 0, 10);
-			count=0;
-			//command
-			for(read_now=0;read_now<strlen(input)-1;read_now++){
-				if(input[read_now] != ' '){
-					command[count++] = input[read_now];
-				}else{	
-					break;
-				}
-			}
-			read_now++;
-			count=0;
-			//others
-			for(;read_now<strlen(input)-1;read_now++){
-				execute[count++] = input[read_now];
-			}
-			/////////////////////
-			if(!strncmp(command, "cd",2)){
-				cd(execute);
-			}else if(!strncmp(command, "pwd",3)){
-				pwd();
-			}else if(!strncmp(command, "export",6)){
-				export_c(execute);
-			}else if(!strncmp(command, "echo",4)){
-				echo(execute);
-			}else {
-				external(input);
-			} 
-			fflush(stdin);
-			memset(input, 0, LENGTH);
-			free(execute);
+			do_command(input);
 			//printf("%s",prompt);
 			//fgets(input, LENGTH, stdin);
+		}
 		input=readline(prompt);
 	}
 	system("PAUSE");
