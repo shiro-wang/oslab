@@ -169,6 +169,7 @@ void external(char* input){
 			strcat(tmp,args[i]);
 			strcat(tmp," ");
 		}
+		printf("tmp:%s\n",tmp);
 		char** args2=sh_split_the_line(tmp);
 		pid_t pid2=fork();
 		if(pid2 == 0){
@@ -176,7 +177,7 @@ void external(char* input){
 				perror("external");
 			exit(EXIT_FAILURE);
 		}else if(pid2 > 0){
-			break;
+			
 		}else{
 			failhaha();
 		}
