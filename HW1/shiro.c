@@ -172,13 +172,15 @@ void external(char* input){
 		}
 		printf("tmp:%s\n",tmp);
 		char** args2=sh_split_the_line(tmp);
-		pid_t pid2=fork();
+		pid_t wpid2, pid2=fork();
 		if(pid2 == 0){
 			if(execvp(args2[0], args2)==-1)
 				perror("external");
 			exit(EXIT_FAILURE);
 		}else if(pid2 > 0){
-			
+			do {
+		      wpid2 = waitpid(pid2, &status, WCONTINUED);
+		    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
 		}else{
 			failhaha();
 		}
