@@ -164,7 +164,7 @@ void external(char* input){
 //	}
 //	printf("\n");
 	if(!strcmp("&",args[command_count-1])){
-		char *tmp;
+		char *tmp=malloc(LSH_TOK_BUFSIZE * sizeof(char*));
 		for(int i=0;i<command_count-1;i++){
 			printf("tmp:%s args[%d]:%s\n",tmp,i,args[i]);
 			strcat(tmp,args[i]);
