@@ -10,6 +10,8 @@
 #define LSH_TOK_BUFSIZE 64
 #define LSH_TOK_DELIM " \t\r\n\a"
 int command_count;
+int pid_count=0;
+int **pidmaps = malloc(LSH_TOK_BUFSIZE * sizeof(pid_t*));
 void cd(char* exe){
 	if(chdir(exe)==-1)
 		perror("cd");
@@ -168,7 +170,7 @@ void external(char* input){
 	if(!strcmp("&",args[command_count-1])){
 		char *tmp=malloc(LSH_TOK_BUFSIZE * sizeof(char*));
 		for(int i=0;i<command_count-1;i++){
-			printf("tmp:%s args[%d]:%s\n",tmp,i,args[i]);
+			//printf("tmp:%s args[%d]:%s\n",tmp,i,args[i]);
 			strcat(tmp,args[i]);
 			strcat(tmp," ");
 		}
@@ -183,7 +185,8 @@ void external(char* input){
 		exit(EXIT_FAILURE);
 	}else if(pid > 0){
 		if(bg == 1){
-			printf("proc %d started]\n", pid);
+			printf("[proc %d started]\n", pid);
+			strcpy(pidmaps[pid_count],pid);
 		}else{
 			do {
 		      wpid = waitpid(pid, &status, WUNTRACED);
