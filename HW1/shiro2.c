@@ -14,6 +14,11 @@ int pid_count=0;
 int *pidmaps;
 char output_filename[50] = {};
 FILE *outfile;
+
+void clean_file(){
+	memset(output_filename,50,sizeof(char));
+	fclose(outfile);
+}
 void cd(char* exe){
 	if(chdir(exe)==-1)
 		perror("cd");
@@ -21,7 +26,12 @@ void cd(char* exe){
 }
 void pwd(){
 	char buf[100];
-	printf("current working directory: %s\n",getcwd(buf, sizeof(buf)));
+	if(outfile){
+		fprintf(outfile,"%s\n",getcwd(buf, sizeof(buf)))
+		clean_file();
+	}else{
+		printf("%s\n",getcwd(buf, sizeof(buf)));
+	}
 }
 void export_c(char* exe){
 	char origin[10]  = {0};
@@ -123,7 +133,12 @@ void echo(char* exe){
 		}
 	}
 	//printf("finish read_now:%d strlen(exe):%ld\n", read_now, strlen(exe));
-	printf("%s\n",after);
+	if(outfile){
+		fprintf(outfile,"%s\n",after);
+		clean_file();
+	}else{
+		printf("%s\n",after);
+	}
 }
 char **sh_split_the_line(char *line)
 {
@@ -160,31 +175,12 @@ char **sh_split_the_line(char *line)
 void failhaha(){
 	printf("Invalid situation\n");
 }
-void output(char** args, int position){
-	memset(output_filename, 50, sizeof(char));
-	int mode=0;
-	if(!strncmp(args[position],">>",2){
-		mode=1;
-	}
-	
-	strcpy(output_filename,args[position+1]);
-	if(mode==0){
-		outfile = fopen(output_filename,"w");
-	}else{
-		outfile = fopen(output_filename,"a+");
-	}
-	args[position]=NULL;
-	do_command(args);
-}
+
 void external(char* input){
 	char** args=sh_split_the_line(input);
 	int status;
-	int bg=0;
-	for(int i=0;i<command_count;i++){
-		if(!strncmp(args[i], ">", 1) || !strncmp(args[i], ">>", 2)){
-			output(args, i);
-		}
-	}
+	int bg=0;	
+	
 	if(!strcmp("&",args[command_count-1])){
 		bg=1;
 		args[command_count-1]=NULL;
@@ -209,64 +205,97 @@ void external(char* input){
 	}
 	
 }
-void do_command(char* input){
-	int read_now;
-	char command[10]={};
-	int count;
-	char *execute = malloc(sizeof(char));
-	read_now = 0;
-	memset(command, 0, 10);
-	memset(execute, 0, 10);
-	count=0;
-	//command
-	for(read_now=0;read_now<strlen(input)-1;read_now++){
-		if(input[read_now] != ' '){
-			command[count++] = input[read_now];
-		}else{	
-			break;
-		}
-	}
-	read_now++;
-	count=0;
-	//others
-	for(;read_now<strlen(input)-1;read_now++){
-		execute[count++] = input[read_now];
-	}
-	/////////////////////
-	if(!strncmp(command, "cd",2)){
-		cd(execute);
-	}else if(!strncmp(command, "pwd",3)){
-		pwd();
-	}else if(!strncmp(command, "export",6)){
-		export_c(execute);
-	}else if(!strncmp(command, "echo",4)){
-		echo(execute);
-	}else {
-		external(input);
-	} 
-	//fflush(stdin);
-	//memset(input, 0, LENGTH);
-	free(execute);
-}
 
 int main(int argc, char **argv) {
 	pidmaps = malloc(LSH_TOK_BUFSIZE * sizeof(pid_t));
-	char history[500]={};
-	//char input[LENGTH]={};
-	
 	char *input;
-	//char *ps;
 	char *prompt = "It's my shell, start! : ";
 	//printf("%s",prompt);
 	input=readline(prompt);
 	
 	while(strncmp(input, "exit", 4)){
 		if(input[0]!=0){
-			//printf("your input:%s",input);
-			//strcat(history, input);
 			add_history(input);
-			//printf("%s",history);
-			do_command(input);
+			//detect > >>
+			int redirect=0;
+			int position=0;
+			int mode=0;
+			
+			for(int i=0;i<strlen(input);i++){
+				if(input[i]=='>'){
+					position=i;
+					redirect = 1;
+					break;
+				}
+			}
+			if(redirect == 1){
+				if(input[position+1]=='>'){
+					if(input[position+2]!=' '){
+						redirect = 0;
+					}else{
+						position++;
+						mode = 1;
+					}
+				}else if(input[position+1]!=' '){
+					redirect = 0;
+				}
+			}
+			if(redirect == 1){
+				int fn=0;
+				for(int i=position+2;i<strlen(input);i++){
+					output_filename[fn++] = input[i];
+				}
+				if(mode==0){
+					outfile = fopen(output_filename,"w");
+					for(int i=position;i<strlen(input);i++){
+						input[i]=NULL;
+					}
+				}else{
+					outfile = fopen(output_filename,"a+");
+					for(int i=position-1;i<strlen(input);i++){
+						input[i]=NULL;
+					}
+				}
+			}
+			
+			//command
+			int read_now;
+			char command[10]={};
+			int count;
+			char *execute = malloc(sizeof(char));
+			read_now = 0;
+			memset(command, 0, 10);
+			memset(execute, 0, 10);
+			count=0;
+			
+			for(read_now=0;read_now<strlen(input)-1;read_now++){
+				if(input[read_now] != ' '){
+					command[count++] = input[read_now];
+				}else{	
+					break;
+				}
+			}
+			read_now++;
+			count=0;
+			//others
+			for(;read_now<strlen(input)-1;read_now++){
+				execute[count++] = input[read_now];
+			}
+			/////////////////////
+			if(!strncmp(command, "cd",2)){
+				cd(execute);
+			}else if(!strncmp(command, "pwd",3)){
+				pwd();
+			}else if(!strncmp(command, "export",6)){
+				export_c(execute);
+			}else if(!strncmp(command, "echo",4)){
+				echo(execute);
+			}else {
+				external(input);
+			} 
+			//fflush(stdin);
+			//memset(input, 0, LENGTH);
+			free(execute);
 			//printf("%s",prompt);
 			//fgets(input, LENGTH, stdin);
 		}
