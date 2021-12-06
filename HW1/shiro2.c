@@ -210,7 +210,7 @@ void showhistory(){
 	HIST_ENTRY ** his;
 	his = history_list();
 	while(his[i] != NULL){
-		printf("%s\n",his->line);
+		printf("%s\n",his[i]->line);
 		i++;
 	}
 }
@@ -233,7 +233,7 @@ int main(int argc, char **argv) {
 				if(input[i] == '>' && input[i-1]==' '){
 					position=i;
 					redirect = 1;
-					printf("repo:%d\n",position);
+					//printf("repo:%d\n",position);
 					break;
 				}
 			}
@@ -300,6 +300,7 @@ int main(int argc, char **argv) {
 			}else if(!strncmp(command, "echo",4)){
 				echo(execute);
 			}else if(!strncmp(command, "history",7)){
+				printf("~his~\n");
 				showhistory();
 			}else{
 				external(input);
