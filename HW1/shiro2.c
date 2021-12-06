@@ -276,8 +276,7 @@ int main(int argc, char **argv) {
 			memset(command, 0, 10);
 			memset(execute, 0, 10);
 			count=0;
-			
-			for(read_now=0;read_now<strlen(input)-1;read_now++){
+			for(read_now=0;read_now<strlen(input);read_now++){
 				if(input[read_now] != ' '){
 					command[count++] = input[read_now];
 				}else{	
@@ -287,7 +286,7 @@ int main(int argc, char **argv) {
 			read_now++;
 			count=0;
 			//others
-			for(;read_now<strlen(input)-1;read_now++){
+			for(;read_now<strlen(input);read_now++){
 				execute[count++] = input[read_now];
 			}
 			/////////////////////
