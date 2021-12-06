@@ -180,11 +180,13 @@ void external(char* input){
 	char** args=sh_split_the_line(input);
 	int status;
 	int bg=0;	
-	
-	if(!strcmp("&",args[command_count-1])){
-		bg=1;
-		args[command_count-1]=NULL;
+	for(int i=0;i<command_count;i++){
+		if(!strcmp("&",args[i])){
+			bg=1;
+			args[i]=NULL;
+		}
 	}
+	
 	pid_t wpid, pid=fork();
 	if(pid == 0){
 		if(execvp(args[0], args)==-1)
@@ -228,7 +230,6 @@ int main(int argc, char **argv) {
 			int redirect=0;
 			int position=0;
 			int mode=0;
-			
 			for(int i=0;i<strlen(input);i++){
 				if(input[i] == '>' && input[i-1]==' '){
 					position=i;
