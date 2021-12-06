@@ -222,9 +222,10 @@ int main(int argc, char **argv) {
 			int mode=0;
 			
 			for(int i=0;i<strlen(input);i++){
-				if(strcmp(input[i],">")){
+				if(input[i] == '>'){
 					position=i;
 					redirect = 1;
+					printf("repo:%d\n",position);
 					break;
 				}
 			}
@@ -241,19 +242,21 @@ int main(int argc, char **argv) {
 				}
 			}
 			if(redirect == 1){
+				char afterinput[50]={};
 				int fn=0;
 				for(int i=position+2;i<strlen(input);i++){
 					output_filename[fn++] = input[i];
 				}
 				if(mode==0){
 					outfile = fopen(output_filename,"w");
-					strncpy(input, input, position);
+					strncpy(afterinput, input, position);
 					
 				}else{
 					outfile = fopen(output_filename,"a+");
-					strncpy(input, input, position-1);
+					strncpy(afterinput, input, position-1);
 				}
-				printf("re: %s\n",input);
+				//printf("re: %s\n",afterinput);
+				strcpy(input,afterinput);
 			}
 			
 			//command
