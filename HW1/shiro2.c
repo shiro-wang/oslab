@@ -109,7 +109,7 @@ void echo(char* exe){
 		}
 		strcat(after,tmp);
 		//printf("read_now:%d\n",read_now);
-		//printf("tmp:%s\n",tmp);
+		printf("tmp:%s\n",tmp);
 		//有用到enc variable 
 		
 		count=0;
@@ -123,9 +123,9 @@ void echo(char* exe){
 				break;
 			}
 		}
-		//printf("envname:%s\n",envname);
-		//printf("env:%s\n",env);
-		//printf("after:%s\n",after);
+		printf("envname:%s\n",envname);
+		printf("env:%s\n",env);
+		printf("after:%s\n",after);
 		//printf("read_now:%d strlen(exe):%d\n", read_now, strlen(exe));
 		if(read_now==strlen(exe)){
 			//printf("end");
