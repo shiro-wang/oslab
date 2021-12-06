@@ -76,6 +76,7 @@ void export_c(char* exe){
 				//printf("env:%s\n",env);
 				break;
 			}
+		}
 		if(strcmp(envname,"")){
 			char* env;
 			env = getenv(envname);
@@ -85,7 +86,7 @@ void export_c(char* exe){
 		//printf("%s\n",env);
 	}
 	//printf("%s\n",after);
-	//setenv(origin, after, 1);
+	setenv(origin, after, 1);
 	//printf("origin:%s after_content:%s\n", origin, getenv(origin));
 }
 void echo(char* exe){
