@@ -205,7 +205,15 @@ void external(char* input){
 	}
 	
 }
-
+void showhistory(){
+	int i=0;
+	HIST_ENTRY ** his;
+	his = history_list();
+	while(his[i] != NULL){
+		printf("%s\n",his->line);
+		i++;
+	}
+}
 int main(int argc, char **argv) {
 	pidmaps = malloc(LSH_TOK_BUFSIZE * sizeof(pid_t));
 	char *input;
@@ -222,7 +230,7 @@ int main(int argc, char **argv) {
 			int mode=0;
 			
 			for(int i=0;i<strlen(input);i++){
-				if(input[i] == '>'){
+				if(input[i] == '>' && input[i-1]==' '){
 					position=i;
 					redirect = 1;
 					printf("repo:%d\n",position);
@@ -291,7 +299,9 @@ int main(int argc, char **argv) {
 				export_c(execute);
 			}else if(!strncmp(command, "echo",4)){
 				echo(execute);
-			}else {
+			}else if(!strncmp(command, "history",7)){
+				showhistory();
+			}else{
 				external(input);
 			} 
 			//fflush(stdin);
