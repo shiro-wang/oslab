@@ -222,7 +222,7 @@ int main(int argc, char **argv) {
 			int mode=0;
 			
 			for(int i=0;i<strlen(input);i++){
-				if(input[i]=='>'){
+				if(strcmp(input[i],">")){
 					position=i;
 					redirect = 1;
 					break;
