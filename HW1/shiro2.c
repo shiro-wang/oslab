@@ -117,14 +117,16 @@ void echo(char* exe){
 			if((exe[read_now] >='a'&&exe[read_now] <='z') || (exe[read_now] >='A'&&exe[read_now] <='Z')){
 				envname[count++] = exe[read_now];
 			}else{
-				char* env;
-				env = getenv(envname);
-				strcat(after,env);
 				break;
 			}
 		}
+		if(strcmp(envname,"")){
+			char* env;
+			env = getenv(envname);
+			strcat(after,env);
+		}
 		printf("envname:%s\n",envname);
-		printf("env:%s\n",env);
+		//printf("env:%s\n",env);
 		printf("after:%s\n",after);
 		//printf("read_now:%d strlen(exe):%d\n", read_now, strlen(exe));
 		if(read_now==strlen(exe)){
