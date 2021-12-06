@@ -27,7 +27,7 @@ void cd(char* exe){
 void pwd(){
 	char buf[100];
 	if(outfile){
-		fprintf(outfile,"%s\n",getcwd(buf, sizeof(buf)))
+		fprintf(outfile,"%s\n",getcwd(buf, sizeof(buf)));
 		clean_file();
 	}else{
 		printf("%s\n",getcwd(buf, sizeof(buf)));
@@ -247,15 +247,13 @@ int main(int argc, char **argv) {
 				}
 				if(mode==0){
 					outfile = fopen(output_filename,"w");
-					for(int i=position;i<strlen(input);i++){
-						input[i]=NULL;
-					}
+					strncpy(input, input, position);
+					
 				}else{
 					outfile = fopen(output_filename,"a+");
-					for(int i=position-1;i<strlen(input);i++){
-						input[i]=NULL;
-					}
+					strncpy(input, input, position-1);
 				}
+				printf("re: %s\n",input);
 			}
 			
 			//command
